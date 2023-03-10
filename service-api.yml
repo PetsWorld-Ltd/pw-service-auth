@@ -1,0 +1,161 @@
+openapi: 3.0.3
+info:
+  title: "PetsWorld Ltd Auth service"
+  description: "Definition of registration, authorization and others API "
+  version: 1.0.0
+
+servers:
+  - url: https://example.com
+    description: auth server
+
+tags:
+  - name: Authorization
+    description: authorization endpoints
+
+paths:
+  /api/v1/auth/phone:
+    post:
+      summary: starts authorization process
+      tags:
+        - Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PhoneRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/PhoneResponse"
+        "400":
+          description: Absent or invalid phone number
+        # А нужно ли оно?
+        "429":
+          description: To many attempts were made
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/PhoneWaitResponse"
+  /api/v1/auth/otp:
+    post:
+      summary: proceeds authorization with otp code
+      tags:
+        - Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/OtpRequest"
+      responses:
+        "200":
+          description: Authorization completed
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/OtpResponse"
+        "400":
+          description: Bad request; Some fields missed or invalid
+  /api/v1/auth/token:
+    post:
+      summary: request new access token with refresh token
+      tags:
+        - Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/NewTokenRequest"
+      responses:
+        "200":
+          description: New access & refresh token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/NewTokenResponse"
+        "400":
+          description: Some fields missed or invalid
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    PhoneRequest:
+      required:
+        - phone
+      type: object
+      properties:
+        phone:
+          type: string
+          description: User phone to register with or of existing account
+          format: phone
+    PhoneResponse:
+      required:
+        - ticket
+      type: object
+      properties:
+        ticket:
+          type: string
+          description: Identifier of authorization session
+    PhoneWaitResponse:
+      required:
+        - waitTime
+      type: object
+      properties:
+        waitTime:
+          type: number
+          format: integer
+          description: time to wait before next attempt for phone request
+    OtpRequest:
+      required:
+        - ticket
+        - otpCode
+        - deviceId
+      type: object
+      properties:
+        ticket:
+          type: string
+          description: Authorization session Identifier
+        otpCode:
+          type: string
+          description: One time password
+        deviceId:
+          type: string
+          description: User device identifier
+    OtpResponse:
+      required:
+        - accessToken
+        - refreshToken
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: API access token
+        refreshToken:
+          type: string
+          description: Refersh token
+    NewTokenRequest:
+      required:
+        - refreshToken
+        - deviceId
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          description: Token for refreshing app's access token
+        deviceId:
+          type: string
+          description: User device identifier
+    NewTokenResponse:
+      required:
+        - accessToken
+        - refreshToken
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: Token to authorize app's requests
