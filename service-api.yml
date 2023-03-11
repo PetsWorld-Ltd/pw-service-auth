@@ -165,6 +165,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DeleteDeviceNotFoundResponse"
+  /api/v1/admin/auth/login:
+    post:
+      description: Web admin login; Provides access & refresh tokens for Web admin
+      tags:
+        - Admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminAuthLoginRequest"
+      responses:
+        200:
+          description: Login data correct; Tokens are returned to make further actions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthLoginResponse"
+        400:
+          description: Mailformed request or other error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthLoginBadRequestResponse"
 
   /api/v1/accounts:
     get:
@@ -403,6 +426,35 @@ components:
         error:
           $ref: "#/components/schemas/ErrorBody"
     DeleteDeviceNotFoundResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AdminAuthLoginRequest:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login: 
+          type: string
+          description: Admin account login name
+        password:
+          type: string
+          description: Admin account password
+    AdminAuthLoginResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+          description: Authorization token 
+        refreshToken:
+          type: string
+          description: Refresh token
+    AdminAuthLoginBadRequestResponse:
       type: object
       properties:
         error:
