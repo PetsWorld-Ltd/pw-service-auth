@@ -102,19 +102,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthTokenBadRequestResponse"
-  /api/v1/auth/token/status:
+  /api/v1/auth/me:
     get:
       security:
         - bearerAuth: [] # это бы обкашлять
       tags:
         - Authorization
-      parameters:
-        - in: query
-          name: deviceId
-          schema:
-            type: string
-          required: true
-          description: Device id for checked token
       responses:
         200:
           description: Token is actual
@@ -140,18 +133,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthTokenStatusNotFoundResponse"
-  /api/v1/auth/device:
+  /api/v1/auth/devices/{deviceId}:
     delete:
       description: Cancel authorization for specified device
       security:
         - bearerAuth: []
       tags:
         - Authorization
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DeleteDeviceRequest"
+      parameters:
+        - in: path
+          name: deviceId
+          schema:
+            type: string
+          required: true
       responses:
         200:
           description: Authorization for specified device was canceled
@@ -376,7 +370,15 @@ components:
           description: Actual access token for user device
     AuthTokenStatusResponse:
       type: object
-      description: Just empty dto for response;
+      description: Account status response;
+      required:
+        - userId
+        - deviceId
+      properties:
+        userId: 
+          type: string
+        deviceId:
+          type: string
     AuthTokenStatusBadRequestResponse:
       type: object
       properties:
@@ -392,13 +394,6 @@ components:
       properties:
         error:
           $ref: "#/components/schemas/ErrorBody"
-    DeleteDeviceRequest:
-      type: object
-      required:
-        - deviceId
-      properties:
-        deviceId:
-          type: string
     DeleteDeviceResponse:
       type: object
       description: Default OK empty response
