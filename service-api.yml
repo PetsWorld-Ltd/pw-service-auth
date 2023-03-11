@@ -24,26 +24,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PhoneRequest"
+              $ref: "#/components/schemas/AuthPhoneRequest"
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PhoneResponse"
+                $ref: "#/components/schemas/AuthPhoneResponse"
         400:
           description: Absent or invalid phone number
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PhoneBadRequestResponse"
+                $ref: "#/components/schemas/AuthPhoneBadRequestResponse"
         429:
           description: To many attempts were made
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PhoneTooManyAttemptsResponse"
+                $ref: "#/components/schemas/AuthPhoneTooManyAttemptsResponse"
   /api/v1/auth/otp:
     post:
       summary: proceeds authorization with otp code
@@ -144,7 +144,7 @@ components:
       type: http
       scheme: bearer
   schemas:
-    PhoneRequest:
+    AuthPhoneRequest:
       required:
         - phone
       type: object
@@ -153,7 +153,7 @@ components:
           type: string
           description: User phone to register with or of existing account
           format: phone
-    PhoneResponse:
+    AuthPhoneResponse:
       required:
         - ticket
       type: object
@@ -161,12 +161,12 @@ components:
         ticket:
           type: string
           description: Identifier of authorization session
-    PhoneBadRequestResponse:
+    AuthPhoneBadRequestResponse:
       type: object
       properties:
         error: 
           $ref: "#/components/schemas/ErrorBody"
-    PhoneTooManyAttemptsResponse:
+    AuthPhoneTooManyAttemptsResponse:
       required:
         - waitTime
       type: object
@@ -215,15 +215,15 @@ components:
           $ref: "#/components/schemas/ErrorBody"
     OtpTooManyAttemptsResponse:
       required:
-        - waitingTime
+        - waitingTimeSeconds
       type: object
       properties:
         error: 
           $ref: "#/components/schemas/ErrorBody"
-        waitingTime:
+        waitingTimeSeconds:
           type: number
           format: integer
-          description: Too many attempts made by client; Retruns waiting time before making next request
+          description: Waiting time before making next request
     AuthTokenRequest:
       required:
         - refreshToken
