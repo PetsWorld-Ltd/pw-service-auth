@@ -165,6 +165,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DeleteDeviceNotFoundResponse"
+  
+  #
+  # Admin
+  #
   /api/v1/admin/auth/login:
     post:
       description: Web admin login; Provides access & refresh tokens for Web admin
@@ -188,8 +192,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AdminAuthLoginBadRequestResponse"
+  /api/v1/admin/auth/token:
+    post:
+      description: Web admin token refresh handle
+      tags:
+        - Admin
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: "#/components/schemas/AdminAuthTokenRequest"
+      responses:
+        200:
+          description: Refresh & access tokens
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthTokenResponse"
+        400:
+          description: Mailformed token update request or other thing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthTokenBadRequestResponse"
 
-  /api/v1/accounts:
+  /api/v1/admin/accounts:
     get:
       security:
         - bearerAuth: []
@@ -458,4 +485,28 @@ components:
       type: object
       properties:
         error:
+          $ref: "#/components/schemas/ErrorBody"
+    AdminAuthTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+    AdminAuthTokenResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+          description: Admin authorization token
+        refreshToken:
+          type: string
+          description: Admin refresh token
+    AdminAuthTokenBadRequestResponse:
+      type: object
+      properties:
+        error: 
           $ref: "#/components/schemas/ErrorBody"
