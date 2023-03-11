@@ -11,6 +11,8 @@ servers:
 tags:
   - name: Authorization
     description: authorization endpoints
+  - name: Admin
+    description: web admin endpoints
 
 paths:
   /api/v1/auth/phone:
@@ -22,23 +24,26 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/PhoneRequest"
+              $ref: "#/components/schemas/PhoneRequest"
       responses:
-        "200":
+        200:
           description: OK
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/PhoneResponse"
-        "400":
+                $ref: "#/components/schemas/PhoneResponse"
+        400:
           description: Absent or invalid phone number
-        # А нужно ли оно?
-        "429":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PhoneBadRequestResponse"
+        429:
           description: To many attempts were made
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/PhoneWaitResponse"
+                $ref: "#/components/schemas/PhoneTooManyAttemptsResponse"
   /api/v1/auth/otp:
     post:
       summary: proceeds authorization with otp code
@@ -48,16 +53,32 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/OtpRequest"
+              $ref: "#/components/schemas/OtpRequest"
       responses:
-        "200":
+        200:
           description: Authorization completed
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/OtpResponse"
-        "400":
+                $ref: "#/components/schemas/OtpResponse"
+        400:
           description: Bad request; Some fields missed or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtbBadRequestResponse"
+        418:
+          description: OTP was expired, request new one
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpExpiredResponse"
+        429:
+          description: To many OTP requests were made; To proceed wait specified time
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpTooManyAttemptsResponse"
   /api/v1/auth/token:
     post:
       summary: request new access token with refresh token
@@ -67,16 +88,55 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/NewTokenRequest"
+              $ref: "#/components/schemas/AuthTokenRequest"
       responses:
-        "200":
+        200:
           description: New access & refresh token
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/NewTokenResponse"
-        "400":
+                $ref: "#/components/schemas/AuthTokenResponse"
+        400:
           description: Some fields missed or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenBadRequestResponse"
+  /api/v1/accounts:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Returns list of all accounts registered in the system
+      tags:
+        - Admin
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: false
+          description: Query to search account by
+        - in: query
+          name: from
+          schema:
+            type: number
+            format: int
+          description: Starting index to load accounts; If absent considered as zero
+          required: false
+        - in: query
+          name: take
+          schema:
+            type: number
+            format: int
+          required: false
+          description: Accounts number to request; Default value is 0
+      responses:
+        200: 
+          description: List of account which matches query; If query not specified - 'take'-available accounts
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/AccountsSearchResponse"
 
 components:
   securitySchemes:
@@ -101,7 +161,12 @@ components:
         ticket:
           type: string
           description: Identifier of authorization session
-    PhoneWaitResponse:
+    PhoneBadRequestResponse:
+      type: object
+      properties:
+        error: 
+          $ref: "#/components/schemas/ErrorBody"
+    PhoneTooManyAttemptsResponse:
       required:
         - waitTime
       type: object
@@ -137,8 +202,29 @@ components:
           description: API access token
         refreshToken:
           type: string
-          description: Refersh token
-    NewTokenRequest:
+          description: Refresh token
+    OtbBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    OtpExpiredResponse:
+      type: object
+      properties:
+        error: 
+          $ref: "#/components/schemas/ErrorBody"
+    OtpTooManyAttemptsResponse:
+      required:
+        - waitingTime
+      type: object
+      properties:
+        error: 
+          $ref: "#/components/schemas/ErrorBody"
+        waitingTime:
+          type: number
+          format: integer
+          description: Too many attempts made by client; Retruns waiting time before making next request
+    AuthTokenRequest:
       required:
         - refreshToken
         - deviceId
@@ -150,7 +236,7 @@ components:
         deviceId:
           type: string
           description: User device identifier
-    NewTokenResponse:
+    AuthTokenResponse:
       required:
         - accessToken
         - refreshToken
@@ -159,3 +245,63 @@ components:
         accessToken:
           type: string
           description: Token to authorize app's requests
+    AuthTokenBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AuthTokenConflictResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    ErrorBody:
+      type: object
+      properties:
+        message: 
+          type: string
+          description: error cause
+    AccountsSearchResponse:
+      type: object
+      properties:
+        total:
+          type: number
+          format: integer
+          description: Total number of accounts
+        accounts:
+          items:
+            $ref: "#/components/schemas/Account"
+            description: List of accounts
+    Account:
+      type: object
+      required:
+        - id
+        - devices
+        - phone
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Account unique identifier
+        devices:
+          items:
+            $ref: "#/components/schemas/Device"
+            description: Devices list which is connected to account
+        phone:
+          type: string
+          format: phone
+          description: Account phone number
+    Device:
+      type: object
+      required:
+        - id
+        - accessToken
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: User's device id
+        accessToken:
+          type: string
+          description: Actual access token for user device
+        
