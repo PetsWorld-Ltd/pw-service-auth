@@ -102,6 +102,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthTokenBadRequestResponse"
+  /api/v1/auth/token/status:
+    get:
+      security:
+        - bearerAuth: [] # это бы обкашлять
+      tags:
+        - Authorization
+      parameters:
+      - in: query
+        name: deviceId
+        schema:
+          type: string
+        required: true
+        description: Device id for checked token
+      responses:
+        200:
+          description: Token is actual
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenStatusResponse"
+        400:
+          description: Some parameters were missed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenStatusBadRequestResponse"
+        401:
+          description: New token is attached to specified device
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenStatusConflictResponse"
+        404:
+          description: No token was found for specified device
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenStatusNotFoundResponse"
   /api/v1/accounts:
     get:
       security:
@@ -304,4 +342,24 @@ components:
         accessToken:
           type: string
           description: Actual access token for user device
+    AuthTokenStatusResponse:
+      type: object
+      description: Just empty dto for response;
+    AuthTokenStatusBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AuthTokenStatusConflictResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AuthTokenStatusNotFoundResponse:
+      type: object
+      properties:
+          error:
+            $ref: "#/components/schemas/ErrorBody"
+
+    
         
