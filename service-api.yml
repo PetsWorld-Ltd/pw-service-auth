@@ -109,12 +109,12 @@ paths:
       tags:
         - Authorization
       parameters:
-      - in: query
-        name: deviceId
-        schema:
-          type: string
-        required: true
-        description: Device id for checked token
+        - in: query
+          name: deviceId
+          schema:
+            type: string
+          required: true
+          description: Device id for checked token
       responses:
         200:
           description: Token is actual
@@ -140,6 +140,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AuthTokenStatusNotFoundResponse"
+  /api/v1/auth/device:
+    delete:
+      description: Cancel authorization for specified device
+      security:
+        - bearerAuth: []
+      tags:
+        - Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteDeviceRequest"
+      responses:
+        200:
+          description: Authorization for specified device was canceled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteDeviceResponse"
+        400:
+          description: Missing or mailformed device id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteDeviceBadRequestResponse"
+        404:
+          description: specified device haven't been found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteDeviceNotFoundResponse"
+
   /api/v1/accounts:
     get:
       security:
@@ -169,11 +201,11 @@ paths:
           required: false
           description: Accounts number to request; Default value is 0
       responses:
-        200: 
+        200:
           description: List of account which matches query; If query not specified - 'take'-available accounts
           content:
             application/json:
-              schema: 
+              schema:
                 $ref: "#/components/schemas/AccountsSearchResponse"
 
 components:
@@ -202,7 +234,7 @@ components:
     AuthPhoneBadRequestResponse:
       type: object
       properties:
-        error: 
+        error:
           $ref: "#/components/schemas/ErrorBody"
     AuthPhoneTooManyAttemptsResponse:
       required:
@@ -249,14 +281,14 @@ components:
     OtpExpiredResponse:
       type: object
       properties:
-        error: 
+        error:
           $ref: "#/components/schemas/ErrorBody"
     OtpTooManyAttemptsResponse:
       required:
         - waitingTimeSeconds
       type: object
       properties:
-        error: 
+        error:
           $ref: "#/components/schemas/ErrorBody"
         waitingTimeSeconds:
           type: number
@@ -296,7 +328,7 @@ components:
     ErrorBody:
       type: object
       properties:
-        message: 
+        message:
           type: string
           description: error cause
     AccountsSearchResponse:
@@ -358,8 +390,25 @@ components:
     AuthTokenStatusNotFoundResponse:
       type: object
       properties:
-          error:
-            $ref: "#/components/schemas/ErrorBody"
-
-    
-        
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    DeleteDeviceRequest:
+      type: object
+      required:
+        - deviceId
+      properties:
+        deviceId:
+          type: string
+    DeleteDeviceResponse:
+      type: object
+      description: Default OK empty response
+    DeleteDeviceBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    DeleteDeviceNotFoundResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
