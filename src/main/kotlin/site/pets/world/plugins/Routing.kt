@@ -1,4 +1,4 @@
-package com.example.plugins
+package site.pets.world.plugins
 
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
@@ -12,7 +12,7 @@ fun Application.configureRouting() {
     install(Resources)
     routing {
         get("/") {
-            call.respondText("Hello World!")
+            call.respondText("Hello world!")
         }
         get<Articles> { article ->
             // Get all articles ...
@@ -20,6 +20,7 @@ fun Application.configureRouting() {
         }
     }
 }
+
 @Serializable
 @Resource("/articles")
 class Articles(val sort: String? = "new")

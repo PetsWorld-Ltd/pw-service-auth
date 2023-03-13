@@ -1,17 +1,16 @@
-package com.example
+@file:JvmName("ApplicationKt")
+
+package site.pets.world
 
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import com.example.plugins.*
+import io.ktor.util.logging.*
+import io.ktor.server.netty.EngineMain as NettyEngineMain
+import site.pets.world.plugins.*
 
-fun main() {
-    embeddedServer(
-        Netty,
-        port = 8080,
-        host = "0.0.0.0",
-        module = Application::module
-    ).start(wait = true)
+fun main(args: Array<String>) {
+    NettyEngineMain.main(args)
 }
 
 fun Application.module() {

@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="start-dev" type="CompoundRunConfigurationType">
+    <toRun name="pw-service-auth::start-dev" type="GradleRunConfiguration" />
+    <toRun name="pw-service-auth::start-watching" type="GradleRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>
