@@ -1,0 +1,530 @@
+openapi: 3.0.3
+info:
+  title: "PetsWorld Ltd Auth service"
+  description: "Definition of registration, authorization and others API "
+  version: 1.0.0
+
+servers:
+  - url: https://example.com
+    description: auth server
+
+tags:
+  - name: Authorization
+    description: authorization endpoints
+  - name: Admin
+    description: web admin endpoints
+
+paths:
+  /api/v1/auth/phone:
+    post:
+      summary: starts authorization process
+      tags:
+        - Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthPhoneRequest"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthPhoneResponse"
+        400:
+          description: Absent or invalid phone number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthPhoneBadRequestResponse"
+        429:
+          description: To many attempts were made
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthPhoneTooManyAttemptsResponse"
+  /api/v1/auth/otp:
+    post:
+      summary: proceeds authorization with otp code
+      tags:
+        - Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OtpRequest"
+      responses:
+        200:
+          description: Authorization completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpResponse"
+        400:
+          description: Bad request; Some fields missed or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtbBadRequestResponse"
+        418:
+          description: OTP was expired, request new one
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpExpiredResponse"
+        429:
+          description: To many OTP requests were made; To proceed wait specified time
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpTooManyAttemptsResponse"
+  /api/v1/auth/token:
+    post:
+      summary: request new access token with refresh token
+      tags:
+        - Authorization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthTokenRequest"
+      responses:
+        200:
+          description: New access & refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenResponse"
+        400:
+          description: Some fields missed or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenBadRequestResponse"
+  /api/v1/auth/me:
+    get:
+      security:
+        - bearerAuth: [] # это бы обкашлять
+      tags:
+        - Authorization
+      responses:
+        200:
+          description: Token is actual
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenStatusResponse"
+        400:
+          description: Some parameters were missed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenStatusBadRequestResponse"
+        401:
+          description: New token is attached to specified device
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenStatusConflictResponse"
+        404:
+          description: No token was found for specified device
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenStatusNotFoundResponse"
+  /api/v1/auth/devices/{deviceId}:
+    delete:
+      description: Cancel authorization for specified device
+      security:
+        - bearerAuth: []
+      tags:
+        - Authorization
+      parameters:
+        - in: path
+          name: deviceId
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Authorization for specified device was canceled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteDeviceResponse"
+        400:
+          description: Missing or mailformed device id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteDeviceBadRequestResponse"
+        404:
+          description: specified device haven't been found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteDeviceNotFoundResponse"
+  
+  #
+  # Admin
+  #
+  /api/v1/admin/auth/login:
+    post:
+      description: Web admin login; Provides access & refresh tokens for Web admin
+      tags:
+        - Admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminAuthLoginRequest"
+      responses:
+        200:
+          description: Login data correct; Tokens are returned to make further actions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthLoginResponse"
+        400:
+          description: Mailformed request or other error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthLoginBadRequestResponse"
+  /api/v1/admin/auth/token:
+    post:
+      description: Web admin token refresh handle
+      tags:
+        - Admin
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: "#/components/schemas/AdminAuthTokenRequest"
+      responses:
+        200:
+          description: Refresh & access tokens
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthTokenResponse"
+        400:
+          description: Mailformed token update request or other thing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthTokenBadRequestResponse"
+
+  /api/v1/admin/accounts:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Returns list of all accounts registered in the system
+      tags:
+        - Admin
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: false
+          description: Query to search account by
+        - in: query
+          name: from
+          schema:
+            type: number
+            format: int
+          description: Starting index to load accounts; If absent considered as zero
+          required: false
+        - in: query
+          name: take
+          schema:
+            type: number
+            format: int
+          required: false
+          description: Accounts number to request; Default value is 20
+      responses:
+        200:
+          description: List of account which matches query; If query not specified - 'take'-available accounts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountsSearchResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    AuthPhoneRequest:
+      required:
+        - phone
+      type: object
+      properties:
+        phone:
+          type: string
+          description: User phone to register with or of existing account
+          format: phone
+    AuthPhoneResponse:
+      required:
+        - ticket
+      type: object
+      properties:
+        ticket:
+          type: string
+          description: Identifier of authorization session
+    AuthPhoneBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AuthPhoneTooManyAttemptsResponse:
+      required:
+        - waitTime
+      type: object
+      properties:
+        waitTime:
+          type: number
+          format: integer
+          description: time to wait before next attempt for phone request
+    OtpRequest:
+      required:
+        - ticket
+        - otpCode
+        - deviceId
+      type: object
+      properties:
+        ticket:
+          type: string
+          description: Authorization session Identifier
+        otpCode:
+          type: string
+          description: One time password
+        deviceId:
+          type: string
+          description: User device identifier
+    OtpResponse:
+      required:
+        - accessToken
+        - refreshToken
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: API access token
+        refreshToken:
+          type: string
+          description: Refresh token
+    OtbBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    OtpExpiredResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    OtpTooManyAttemptsResponse:
+      required:
+        - waitingTimeSeconds
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+        waitingTimeSeconds:
+          type: number
+          format: integer
+          description: Waiting time before making next request
+    AuthTokenRequest:
+      required:
+        - refreshToken
+        - deviceId
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          description: Token for refreshing app's access token
+        deviceId:
+          type: string
+          description: User device identifier
+    AuthTokenResponse:
+      required:
+        - accessToken
+        - refreshToken
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: Token to authorize app's requests
+    AuthTokenBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AuthTokenConflictResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    ErrorBody:
+      type: object
+      properties:
+        message:
+          type: string
+          description: error cause
+    AccountsSearchResponse:
+      type: object
+      properties:
+        total:
+          type: number
+          format: integer
+          description: Total number of accounts
+        accounts:
+          items:
+            $ref: "#/components/schemas/Account"
+            description: List of accounts
+    Account:
+      type: object
+      required:
+        - id
+        - devices
+        - phone
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Account unique identifier
+        devices:
+          items:
+            $ref: "#/components/schemas/Device"
+            description: Devices list which is connected to account
+        phone:
+          type: string
+          format: phone
+          description: Account phone number
+        createdAt:
+          type: string
+          format: datetime
+          description: Timestamp of account creation
+        updatedAt:
+          type: string
+          format: datetime
+          description: Timestamp of account last update
+    Device:
+      type: object
+      required:
+        - id
+        - accessToken
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: User's device id
+        accessToken:
+          type: string
+          description: Actual access token for user device
+        createdAt:
+          type: string
+          format: datetime
+          description: Timestamp of device creation
+        updatedAt:
+          type: string
+          format: datetime
+          description: Timestamp of device last update
+    AuthTokenStatusResponse:
+      type: object
+      description: Account status response;
+      required:
+        - userId
+        - deviceId
+      properties:
+        userId: 
+          type: string
+        deviceId:
+          type: string
+    AuthTokenStatusBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AuthTokenStatusConflictResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AuthTokenStatusNotFoundResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    DeleteDeviceResponse:
+      type: object
+      description: Default OK empty response
+    DeleteDeviceBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    DeleteDeviceNotFoundResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AdminAuthLoginRequest:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login: 
+          type: string
+          description: Admin account login name
+        password:
+          type: string
+          description: Admin account password
+    AdminAuthLoginResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+          description: Authorization token 
+        refreshToken:
+          type: string
+          description: Refresh token
+    AdminAuthLoginBadRequestResponse:
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/ErrorBody"
+    AdminAuthTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+    AdminAuthTokenResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+          description: Admin authorization token
+        refreshToken:
+          type: string
+          description: Admin refresh token
+    AdminAuthTokenBadRequestResponse:
+      type: object
+      properties:
+        error: 
+          $ref: "#/components/schemas/ErrorBody"
