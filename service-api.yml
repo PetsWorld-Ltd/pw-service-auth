@@ -243,7 +243,7 @@ paths:
             type: number
             format: int
           required: false
-          description: Accounts number to request; Default value is 0
+          description: Accounts number to request; Default value is 20
       responses:
         200:
           description: List of account which matches query; If query not specified - 'take'-available accounts
@@ -392,6 +392,7 @@ components:
         - id
         - devices
         - phone
+        - createdAt
       properties:
         id:
           type: string
@@ -405,11 +406,20 @@ components:
           type: string
           format: phone
           description: Account phone number
+        createdAt:
+          type: string
+          format: datetime
+          description: Timestamp of account creation
+        updatedAt:
+          type: string
+          format: datetime
+          description: Timestamp of account last update
     Device:
       type: object
       required:
         - id
         - accessToken
+        - createdAt
       properties:
         id:
           type: string
@@ -418,6 +428,14 @@ components:
         accessToken:
           type: string
           description: Actual access token for user device
+        createdAt:
+          type: string
+          format: datetime
+          description: Timestamp of device creation
+        updatedAt:
+          type: string
+          format: datetime
+          description: Timestamp of device last update
     AuthTokenStatusResponse:
       type: object
       description: Account status response;
