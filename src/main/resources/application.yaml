@@ -1,6 +1,7 @@
 ktor:
+    development: true
     deployment:
-        port: 8080
+        port: 5050
         watch:
           - classes
           - resources

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pw-service-auth::start-dev" type="GradleRunConfiguration" factoryName="Gradle" folderName="dev">
+  <configuration default="false" name="pw-service-auth::start-server" type="GradleRunConfiguration" factoryName="Gradle" folderName="dev">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
