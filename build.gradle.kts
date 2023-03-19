@@ -1,5 +1,3 @@
-import org.gradle.jvm.toolchain.internal.JavaToolchain
-
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -22,6 +20,13 @@ java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
+
+ktor {
+    fatJar {
+        archiveFileName.set("app.jar")
+    }
+}
+
 repositories {
     mavenCentral()
 }
