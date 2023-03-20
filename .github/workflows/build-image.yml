@@ -4,7 +4,8 @@ on:
   push:
     tags:
       - pw-service-auth-*
-      - debug-*
+    branches:
+      - main
 
 env:
   REGISTRY: ghcr.io
