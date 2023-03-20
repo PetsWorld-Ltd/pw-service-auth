@@ -13,11 +13,14 @@ fun main(args: Array<String>) {
     NettyEngineMain.main(args)
 }
 
+@Suppress("unused") // Configured to launch via application.yml in resources
 fun Application.module() {
-    DatabaseFactory.init()
+    val authApp = AuthApp(this)
+    authApp.onCreate()
     configureSecurity()
     configureAdministration()
     configureSerialization()
     configureMonitoring()
     configureRouting()
 }
+

@@ -1,10 +1,6 @@
 ktor:
-    development: true
     deployment:
-        port: 5050
-        watch:
-          - classes
-          - resources
+        port: "$PORT:80"
     application:
         modules:
           - site.pets.world.ApplicationKt.module
