@@ -21,6 +21,6 @@ fun Application.module() {
     configureAdministration()
     configureSerialization()
     configureMonitoring()
-    configureRouting()
+    configureRouting(authApp)
 }
 
