@@ -57,6 +57,7 @@ jobs:
           port: 22
           script: |
             cd /opt/pets-world-ltd/pw-service-auth
+            ls
             docker compose pull 
-            docker compose up -d --env-file .env.stg
+            docker compose -f docker-compose.stage.yml --env-file .env.stg up -d 
             docker image prune
