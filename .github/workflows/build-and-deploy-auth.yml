@@ -52,9 +52,8 @@ jobs:
           host: ${{ secrets.TARGET_SERVER }}
           username: ${{ secrets.TARGET_LOGIN }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.PORT }}
           source: "docker-compose.stage.yml"
-          target: "/opt/pets-world-ltd/pw-service-auth/"
+          target: "/opt/pets-world-ltd/pw-service-auth"
 
       - name: Update images and launch
         uses: appleboy/ssh-action@master
