@@ -1,0 +1,46 @@
+name: Build docker image
+
+on:
+  push:
+    branches:
+      - server-dev-env
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - uses: actions/checkout@master
+      - name: Copy docker compose configuration for stage
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.TARGET_SERVER }}
+          username: ${{ secrets.TARGET_LOGIN }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+#          port: ${{ secrets.PORT }}
+          source: "docker-compose.stage.yml"
+          target: "/opt/pets-world-ltd/pw-service-auth"
+
+      - name: Update images and launch
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.TARGET_SERVER }}
+          username: ${{ secrets.TARGET_LOGIN }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          script: |
+            cd /opt/pets-world-ltd/pw-service-auth
+            ls
+            docker compose pull 
+            docker compose -f docker-compose.stage.yml --env-file .env.stg up -d 
+            docker image prune
