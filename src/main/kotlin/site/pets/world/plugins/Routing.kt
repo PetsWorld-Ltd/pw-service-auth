@@ -10,13 +10,13 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.serialization.Serializable
-import java.io.OutputStream
+import site.pets.world.AuthApp
 
-fun Application.configureRouting() {
+fun Application.configureRouting(authApp: AuthApp) {
     install(Resources)
     routing {
         get("/") {
-            call.respondText("Hello world!")
+            call.respondText("Hello world! #${authApp.getRootRequestNumber()}")
         }
         get<Articles> { article ->
             // Get all articles ...

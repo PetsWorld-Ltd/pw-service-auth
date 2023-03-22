@@ -2,9 +2,16 @@ package site.pets.world
 
 import io.ktor.server.application.*
 import io.ktor.util.logging.*
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 
 class AuthApp(private val application: Application) : Logger by application.log {
+
+    private val rootRequestNumber = AtomicInteger(1)
+
+    fun getRootRequestNumber(): Int {
+        return rootRequestNumber.getAndIncrement()
+    }
 
     lateinit var serviceConfig: ServiceConfig
         private set
