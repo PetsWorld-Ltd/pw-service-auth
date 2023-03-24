@@ -65,7 +65,8 @@ jobs:
           script: |
             cd /opt/pets-world-ltd/pw-service-auth
             mv docker-compose.stage.yml docker-compose.yml
-            ls
+            la
+            echo TAG MONGODB_USER MONGODB_PASS
             docker compose pull 
             docker compose up -d 
             docker image prune
