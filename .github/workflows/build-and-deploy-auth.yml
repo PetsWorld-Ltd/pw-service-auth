@@ -65,7 +65,10 @@ jobs:
           script: |
             cd /opt/pets-world-ltd/pw-service-auth
             ls -la
-            echo $TAG $MONGODB_USER $MONGODB_PASS
-            docker compose -f docker-compose.stage.yml pull 
-            docker compose -f docker-compose.stage.yml up -d 
+            rm -rf .env.stg
+            echo "MONGODB_USER=$MONGODB_USER" >> .env.stg
+            echo "MONGODB_PASS=MONGODB_PASS" >> .env.stg
+            echo "TAG=TAG" >> .env.stg
+            docker compose -f docker-compose.stage.yml --env-file .env.stg pull 
+            docker compose -f docker-compose.stage.yml --env-file .env.stg up -d 
             docker image prune
