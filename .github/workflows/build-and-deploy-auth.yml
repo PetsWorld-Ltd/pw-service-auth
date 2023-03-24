@@ -57,7 +57,7 @@ jobs:
           username: ${{ secrets.TARGET_LOGIN }}
           password: ${{ secrets.SERVER_PASSWORD }}
           env:
-            TAG: ${{ steps.meta.outputs.tags[0] }}
+            TAG: ${{  github.ref_name }}"
           port: 22
           script: |
             cd /opt/pets-world-ltd/pw-service-auth
