@@ -54,15 +54,17 @@ jobs:
         uses: appleboy/ssh-action@v0.1.8
         env:
           TAG: ${{  github.ref_name }}"
+          MONGODB_USER: ${{ secrets.MONGODB_USER }}
+          MONGODB_PASS: ${{ secrets.MONGODB_PASS }}
         with:
           host: ${{ secrets.TARGET_SERVER }}
           username: ${{ secrets.TARGET_LOGIN }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          envs: TAG
+          envs: TAG,MONGODB_USER,MONGODB_PASS
           port: 22
           script: |
             cd /opt/pets-world-ltd/pw-service-auth
             ls
             docker compose pull 
-            docker compose -f docker-compose.stage.yml --env-file .env.stg up -d 
+            docker compose -f docker-compose.stage.yml up -d 
             docker image prune
