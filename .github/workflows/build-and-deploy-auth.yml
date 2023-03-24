@@ -1,0 +1,74 @@
+name: Build and deploy Auth service
+
+on:
+  push:
+    tags:
+      - stage-*
+    branches:
+      - 'main'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Copy docker compose configuration for stage
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.TARGET_SERVER }}
+          username: ${{ secrets.TARGET_LOGIN }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: "docker-compose.stage.yml"
+          target: "/opt/pets-world-ltd/pw-service-auth/"
+
+      # stub commit
+      - name: Update images and launch
+        uses: appleboy/ssh-action@v0.1.8
+        env:
+          TAG: ${{  github.ref_name }}
+          MONGODB_USER: ${{ secrets.MONGODB_USER }}
+          MONGODB_PASS: ${{ secrets.MONGODB_PASS }}
+        with:
+          host: ${{ secrets.TARGET_SERVER }}
+          username: ${{ secrets.TARGET_LOGIN }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          envs: TAG,MONGODB_USER,MONGODB_PASS
+          port: 22
+          script: |
+            cd /opt/pets-world-ltd/pw-service-auth
+            ls -la
+            rm -rf .env.stg
+            docker compose -f docker-compose.stage.yml pull 
+            docker compose -f docker-compose.stage.yml up -d 
+            docker image prune
