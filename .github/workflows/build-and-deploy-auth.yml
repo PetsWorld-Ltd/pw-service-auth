@@ -52,12 +52,13 @@ jobs:
 
       - name: Update images and launch
         uses: appleboy/ssh-action@v0.1.8
+        env:
+          TAG: ${{  github.ref_name }}"
         with:
           host: ${{ secrets.TARGET_SERVER }}
           username: ${{ secrets.TARGET_LOGIN }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          env:
-            TAG: ${{  github.ref_name }}"
+          envs: TAG
           port: 22
           script: |
             cd /opt/pets-world-ltd/pw-service-auth
