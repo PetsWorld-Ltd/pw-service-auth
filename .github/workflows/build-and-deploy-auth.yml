@@ -48,7 +48,7 @@ jobs:
           username: ${{ secrets.TARGET_LOGIN }}
           password: ${{ secrets.SERVER_PASSWORD }}
           source: "docker-compose.stage.yml"
-          target: "/opt/pets-world-ltd/pw-service-auth"
+          target: "/opt/pets-world-ltd/pw-service-auth/docker-compose.yml"
 
       - name: Update images and launch
         uses: appleboy/ssh-action@v0.1.8
@@ -66,5 +66,5 @@ jobs:
             cd /opt/pets-world-ltd/pw-service-auth
             ls
             docker compose pull 
-            docker compose -f docker-compose.stage.yml up -d 
+            docker compose up -d 
             docker image prune
