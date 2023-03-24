@@ -3,7 +3,7 @@ networks:
 
 services:
   app:
-    image: ghcr.io/petsworld-ltd/pw-service-auth:latest
+    image: "ghcr.io/petsworld-ltd/pw-service-auth:${TAG}"
     ports:
       - 8080:80
     networks:
