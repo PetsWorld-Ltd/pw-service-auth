@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - stage-*
+    branches:
+      - 'main'
 
 env:
   REGISTRY: ghcr.io
