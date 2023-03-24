@@ -64,9 +64,8 @@ jobs:
           port: 22
           script: |
             cd /opt/pets-world-ltd/pw-service-auth
-            mv docker-compose.stage.yml docker-compose.yml
             ls -la
-            echo TAG MONGODB_USER MONGODB_PASS
-            docker compose pull 
-            docker compose up -d 
+            echo $TAG $MONGODB_USER $MONGODB_PASS
+            docker compose -f docker-compose.stage.yml pull 
+            docker compose -f docker-compose.stage.yml up -d 
             docker image prune
