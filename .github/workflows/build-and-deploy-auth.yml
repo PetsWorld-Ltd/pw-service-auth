@@ -50,6 +50,7 @@ jobs:
           source: "docker-compose.stage.yml"
           target: "/opt/pets-world-ltd/pw-service-auth/"
 
+      # stub commit
       - name: Update images and launch
         uses: appleboy/ssh-action@v0.1.8
         env:
