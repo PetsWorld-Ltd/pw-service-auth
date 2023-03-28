@@ -46,6 +46,8 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
     implementation("org.litote.kmongo:kmongo-async:$kmongo_version")
     implementation("org.litote.kmongo:kmongo-reactor:$kmongo_version")
+    implementation("io.ktor:ktor-server-swagger:$ktor_version")
+    implementation("io.ktor:ktor-server-cors:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
