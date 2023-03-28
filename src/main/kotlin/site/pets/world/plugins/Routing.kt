@@ -3,6 +3,8 @@ package site.pets.world.plugins
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.swagger.*
 import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.resources.Resources
@@ -28,6 +30,12 @@ fun Application.configureRouting(authApp: AuthApp) {
                 status = HttpStatusCode.OK,
                 provider = { call.receiveText() },
             )
+        }
+        swaggerUI("/swagger", swaggerFile = "service-api.yaml") {
+            install(CORS) {
+                anyHost()
+                allowHeader(HttpHeaders.ContentType)
+            }
         }
     }
 }
