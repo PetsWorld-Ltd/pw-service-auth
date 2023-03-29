@@ -3,7 +3,7 @@
 
 ## Data scheme
 
-[Схема данных](https://miro.com/app/board/uXjVMZQ_Gwk=/)
+[Data scheme](https://miro.com/app/board/uXjVMZQ_Gwk=/)
 
 ## Development
 
