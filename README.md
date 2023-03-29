@@ -1,6 +1,11 @@
 # pw-service-auth
 
-### Development
+
+## Data scheme
+
+[Data scheme](https://miro.com/app/board/uXjVMZQ_Gwk=/)
+
+## Development
 
 For the development it will be more convenient to have server auto-reload on any change.
 
