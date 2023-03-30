@@ -13,6 +13,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.serialization.Serializable
 import site.pets.world.AuthApp
+import site.pets.world.admin.admin
 
 fun Application.configureRouting(authApp: AuthApp) {
     install(Resources)
@@ -37,6 +38,8 @@ fun Application.configureRouting(authApp: AuthApp) {
                 allowHeader(HttpHeaders.ContentType)
             }
         }
+
+        admin(authApp.repositories)
     }
 }
 

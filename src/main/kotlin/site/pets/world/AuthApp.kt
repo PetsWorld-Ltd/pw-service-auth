@@ -19,9 +19,13 @@ class AuthApp(private val application: Application) : Logger by application.log 
     lateinit var databaseFactory: DatabaseFactory
         private set
 
+    lateinit var repositories: Repositories
+        private set
+
     fun onCreate() {
         serviceConfig = onInitServiceConfig()
-//        databaseFactory = onInitDatabaseFactory()
+        databaseFactory = onInitDatabaseFactory()
+        repositories = MongoRepositories(databaseFactory)
     }
 
     private fun onInitServiceConfig(): ServiceConfig {

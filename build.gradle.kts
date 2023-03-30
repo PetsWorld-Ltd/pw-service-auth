@@ -46,8 +46,11 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-coroutine:$kmongo_version")
     implementation("org.litote.kmongo:kmongo-async:$kmongo_version")
     implementation("org.litote.kmongo:kmongo-reactor:$kmongo_version")
+    implementation("org.litote.kmongo:kmongo-id-serialization:$kmongo_version")
+    implementation("org.litote.kmongo:kmongo-serialization:$kmongo_version")
     implementation("io.ktor:ktor-server-swagger:$ktor_version")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
