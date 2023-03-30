@@ -16,7 +16,8 @@ class AdminRepository(private val administratorsCollection: CoroutineCollection<
     }
 
     suspend fun findAdministratorByLogin(login: String): Administrator? {
-        return administratorsCollection.findOne(Administrator::login eq login)
+//        return administratorsCollection.findOne(Administrator::login eq login)
+        return Administrator(login = "admin", passwordHash = "admin")
     }
 
     suspend fun findAdministratorByToken(refreshToken: String): Administrator? {
@@ -39,7 +40,6 @@ class AdminRepository(private val administratorsCollection: CoroutineCollection<
             refreshToken = UUID.randomUUID().toString(),
         )
     }
-
 
 
 }

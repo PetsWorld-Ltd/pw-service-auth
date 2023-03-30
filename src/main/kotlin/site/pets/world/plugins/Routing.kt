@@ -29,7 +29,7 @@ fun Application.configureRouting(authApp: AuthApp) {
             }
         }
 
-        route("api") {
+        route("/api") {
             admin(authApp.repositories)
         }
     }

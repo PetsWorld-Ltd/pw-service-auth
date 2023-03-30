@@ -12,8 +12,10 @@ import site.pets.world.common.dto.ErrorBody
 
 fun Route.admin(repositories: Repositories) {
     route("/v1/admin") {
-        adminLogin(repositories)
-        updateToken(repositories)
+        route("auth") {
+            adminLogin(repositories)
+            updateToken(repositories)
+        }
     }
 }
 
