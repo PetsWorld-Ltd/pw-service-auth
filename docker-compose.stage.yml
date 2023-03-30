@@ -9,10 +9,10 @@ services:
     networks:
       - pw-service-auth
     environment:
-      - MONGODB_ADDRESS=mongo
-      - MONGODB_PORT=27017
-      - MONGODB_PASS
-      - MONGODB_USER
+      MONGODB_ADDRESS: mongo
+      MONGODB_PORT: 27017
+      MONGODB_PASS: ${MONGODB_PASS}
+      MONGODB_USER: ${MONGODB_USER}
 
   mongo:
     image: mongo:4.4.19-focal
@@ -25,8 +25,8 @@ services:
     volumes:
       - pw-service-auth-data:/data/db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASS}
 
 
 #  mongo-express:

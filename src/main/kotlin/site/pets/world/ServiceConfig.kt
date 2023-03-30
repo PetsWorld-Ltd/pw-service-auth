@@ -17,10 +17,10 @@ data class MongoConfig(
     val mongoPort: String,
 ) {
     companion object {
-        const val ENV_MONGO_USER = "MONGO_USER"
-        const val ENV_MONGO_PASS = "MONGO_PASS"
-        const val ENV_MONGO_ADDRESS = "MONGO_ADDRESS"
-        const val ENV_MONGO_PORT = "MONGO_PORT"
+        const val ENV_MONGO_USER = "MONGODB_USER"
+        const val ENV_MONGO_PASS = "MONGODB_PASS"
+        const val ENV_MONGO_ADDRESS = "MONGODB_ADDRESS"
+        const val ENV_MONGO_PORT = "MONGODB_PORT"
 
         val Default = MongoConfig(
             mongoUser = "root",
