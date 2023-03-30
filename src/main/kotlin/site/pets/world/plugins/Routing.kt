@@ -21,17 +21,7 @@ fun Application.configureRouting(authApp: AuthApp) {
         get("/") {
             call.respondText("Hello world! #${authApp.getRootRequestNumber()}")
         }
-        get<Articles> { article ->
-            // Get all articles ...
-            call.respond("List of articles sorted starting from ${article.sort}")
-        }
-        post("/echo") {
-            call.respondText(
-                contentType = call.request.contentType(),
-                status = HttpStatusCode.OK,
-                provider = { call.receiveText() },
-            )
-        }
+
         swaggerUI("/swagger", swaggerFile = "service-api.yaml") {
             install(CORS) {
                 anyHost()
@@ -39,7 +29,9 @@ fun Application.configureRouting(authApp: AuthApp) {
             }
         }
 
-        admin(authApp.repositories)
+        route("api") {
+            admin(authApp.repositories)
+        }
     }
 }
 
