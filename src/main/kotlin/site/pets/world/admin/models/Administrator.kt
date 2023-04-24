@@ -1,10 +1,9 @@
-package site.pets.world.admin.schema
+package site.pets.world.admin.models
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bson.BsonDateTime
-import org.bson.BsonTimestamp
 import org.litote.kmongo.Id
 import org.litote.kmongo.newId
 

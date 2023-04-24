@@ -2,7 +2,7 @@ package site.pets.world
 
 import org.litote.kmongo.coroutine.CoroutineCollection
 import site.pets.world.admin.AdminRepository
-import site.pets.world.admin.schema.Administrator
+import site.pets.world.admin.models.Administrator
 
 interface Repositories {
     val adminRepository: AdminRepository

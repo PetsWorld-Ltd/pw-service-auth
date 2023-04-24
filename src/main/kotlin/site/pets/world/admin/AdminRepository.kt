@@ -1,45 +1,52 @@
 package site.pets.world.admin
 
-import org.bson.BsonDateTime
+import org.bson.Document
 import org.litote.kmongo.EMPTY_BSON
 import org.litote.kmongo.coroutine.CoroutineCollection
-import org.litote.kmongo.eq
-import site.pets.world.admin.schema.AdminSession
-import site.pets.world.admin.schema.Administrator
-import java.util.UUID
+import site.pets.world.admin.models.AdminSession
+import site.pets.world.admin.models.Administrator
+import site.pets.world.common.models.AccessToken
+import site.pets.world.common.models.RefreshToken
 
-class AdminRepository(private val administratorsCollection: CoroutineCollection<Administrator>) {
+class AdminRepository(private val col: CoroutineCollection<Administrator>) {
 
     suspend fun getAdministrators(): List<Administrator> {
-        return administratorsCollection.find(EMPTY_BSON)
-            .toList()
+        return col.find(EMPTY_BSON).toList()
     }
 
     suspend fun findAdministratorByLogin(login: String): Administrator? {
-//        return administratorsCollection.findOne(Administrator::login eq login)
-        return Administrator(login = "admin", passwordHash = "admin")
+        return col.findOne("{ login: '${login}'}")
     }
 
-    suspend fun findAdministratorByToken(refreshToken: String): Administrator? {
-        return Administrator(
-            login = "admin",
-            passwordHash = "admin",
-        )
+    suspend fun findAdministratorByToken(accessToken: AccessToken): Administrator? {
+        return col.findOne("{ sessions.accessToken: '${accessToken.value}'}")
     }
+
+    suspend fun findAdministratorByToken(refreshToken: RefreshToken): Administrator? {
+        return col.findOne("{ sessions.refreshToken: '${refreshToken.value}'}")
+    }
+
 
     suspend fun createSession(administrator: Administrator): AdminSession {
-        return AdminSession(
-            accessToken = UUID.randomUUID().toString(),
-            refreshToken = UUID.randomUUID().toString(),
+        val newSession = AdminSession()
+        col.updateOne(
+            filter = "{ login: '${administrator.login}'}",
+            update = Document("\$push", Document("sessions", newSession))
+        )
+        return newSession
+    }
+
+    suspend fun expireSession(refreshToken: RefreshToken) {
+        col.updateOne(
+            filter = "{ sessions.refreshToken: '${refreshToken.value}'}",
+            update = "{ sessions.isActive: 'false' }",
         )
     }
 
-    suspend fun updateSession(administrator: Administrator, refreshToken: String): AdminSession {
-        return AdminSession(
-            accessToken = UUID.randomUUID().toString(),
-            refreshToken = UUID.randomUUID().toString(),
+    suspend fun expireSession(accessToken: AccessToken) {
+        col.updateOne(
+            filter = "{ sessions.accessToken: '${accessToken.value}'}",
+            update = "{ sessions.isActive: 'false' }",
         )
     }
-
-
 }

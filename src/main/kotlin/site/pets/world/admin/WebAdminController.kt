@@ -5,10 +5,10 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import site.pets.world.MongoRepositories
 import site.pets.world.Repositories
 import site.pets.world.admin.dto.*
 import site.pets.world.common.dto.ErrorBody
+import site.pets.world.common.models.RefreshToken
 
 fun Route.admin(repositories: Repositories) {
     route("/v1/admin") {
@@ -55,7 +55,7 @@ private fun Route.updateToken(repositories: Repositories) {
     post("token") {
         val request = call.receive<AdminAuthTokenRequest>()
         val adminRepository = repositories.adminRepository
-        val admin = adminRepository.findAdministratorByToken(request.refreshToken)
+        val admin = adminRepository.findAdministratorByToken(RefreshToken(request.refreshToken))
         if (admin == null) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
@@ -64,7 +64,7 @@ private fun Route.updateToken(repositories: Repositories) {
                 )
             )
         } else {
-            val session = adminRepository.updateSession(admin, request.refreshToken)
+            val session = adminRepository.expireSession(request.refreshToken)
             call.respond(
                 status = HttpStatusCode.OK,
                 AdminAuthTokenResponse(
