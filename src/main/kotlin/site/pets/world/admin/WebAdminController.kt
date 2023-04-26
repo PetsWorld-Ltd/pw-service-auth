@@ -13,16 +13,15 @@ import site.pets.world.common.models.RefreshToken
 fun Route.admin(repositories: Repositories) {
     route("/v1/admin") {
         route("auth") {
-            adminLogin(repositories)
-            updateToken(repositories)
+            adminLogin(repositories.adminRepository)
+            updateToken(repositories.adminRepository)
         }
     }
 }
 
-private fun Route.adminLogin(repositories: Repositories) {
+private fun Route.adminLogin(adminRepository: AdminRepository) {
     post("login") {
         val request = call.receive<AdminAuthLoginRequest>()
-        val adminRepository = repositories.adminRepository
         val admin = adminRepository.findAdministratorByLogin(request.login)
         if (admin == null) {
             call.respond(
@@ -42,35 +41,29 @@ private fun Route.adminLogin(repositories: Repositories) {
             val session = adminRepository.createSession(admin)
             call.respond(
                 status = HttpStatusCode.OK,
-                AdminAuthLoginResponse(
-                    accessToken = session.accessToken,
-                    refreshToken = session.refreshToken,
-                )
+                AdminAuthLoginResponse(session),
             )
         }
     }
 }
 
-private fun Route.updateToken(repositories: Repositories) {
+private fun Route.updateToken(adminRepository: AdminRepository) {
     post("token") {
         val request = call.receive<AdminAuthTokenRequest>()
-        val adminRepository = repositories.adminRepository
-        val admin = adminRepository.findAdministratorByToken(RefreshToken(request.refreshToken))
-        if (admin == null) {
+        val refreshToken = RefreshToken(request.refreshToken)
+        adminRepository.expireSession(refreshToken)
+        val session = adminRepository.createSession(refreshToken)
+        if (session == null) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
                 AdminAuthTokenBadRequestResponse(
-                    ErrorBody("Session with refreshToke '${request.refreshToken}' no found")
+                    ErrorBody("Session with refreshToken '${request.refreshToken}' not found")
                 )
             )
         } else {
-            val session = adminRepository.expireSession(request.refreshToken)
             call.respond(
                 status = HttpStatusCode.OK,
-                AdminAuthTokenResponse(
-                    accessToken = session.accessToken,
-                    refreshToken = session.refreshToken,
-                )
+                AdminAuthTokenResponse(session)
             )
         }
     }
