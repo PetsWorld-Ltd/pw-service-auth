@@ -55,4 +55,4 @@ jobs:
             docker pull $IMAGE
             PW_NETWORK=$(docker network ls | grep pw-service-auth | awk '{printf $1}')
             echo "Image `$IMAGE` will be launched"
-            docker run --network $PW_NETWORK -e MONGODB_USER=$MONGODB_USER -e MONGODB_PASS=$MONGODB_PASS -e MONGODB_ADDRESS=localhost:27017  --name mongodb_init $IMAGE
+            docker run --network $PW_NETWORK -e MONGODB_USER=$MONGODB_USER -e MONGODB_PASS=$MONGODB_PASS -e MONGODB_ADDRESS=mongo:27017  --name mongodb_init $IMAGE
