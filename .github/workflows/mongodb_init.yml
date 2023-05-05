@@ -47,7 +47,7 @@ jobs:
           host: ${{ secrets.TARGET_SERVER }}
           username: ${{ secrets.TARGET_LOGIN }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          envs: MONGODB_USER,MONGODB_PASS
+          envs: IMAGE,MONGODB_USER,MONGODB_PASS
           port: 22
           script: |
             docker image prune
