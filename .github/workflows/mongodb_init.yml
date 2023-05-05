@@ -1,11 +1,11 @@
 name: Init administrators in DB
 
 on:
-  push:
-    branches:
-      - 'mongodb_init'
-    paths:
-      - 'mongo/**'
+#  push:
+#    branches:
+#      - 'mongodb_init'
+#    paths:
+#      - 'mongo/**'
   workflow_dispatch:
 
 
