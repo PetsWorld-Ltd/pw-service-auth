@@ -10,10 +10,9 @@ on:
 
 
 env:
-  env:
-    REGISTRY: ghcr.io
-    ORGANISATION: petsworld-ltd
-    IMAGE_NAME: pw-service-auth-mongodb-init
+  REGISTRY: ghcr.io
+  ORGANISATION: petsworld-ltd
+  IMAGE_NAME: pw-service-auth-mongodb-init
 
 jobs:
   build-and-push-image:
