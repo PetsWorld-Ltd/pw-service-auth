@@ -5,7 +5,7 @@ on:
     branches:
       - 'mongodb_init'
     paths:
-      - 'mongodb/**'
+      - 'mongo/**'
   workflow_dispatch:
 
 
