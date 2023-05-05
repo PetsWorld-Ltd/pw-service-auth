@@ -48,7 +48,7 @@ jobs:
         with:
           context: mongo
           push: true
-          tags: pw-service-auth-mongodb-init:${{ github.ref_name }}
+          tags: ghcr.io/petsworld-ltd/pw-service-auth-mongodb-init:${{ github.ref_name }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Copy docker compose configuration for stage
