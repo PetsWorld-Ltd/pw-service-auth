@@ -28,18 +28,6 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASS}
 
-  mongo_init:
-    image: "ghcr.io/petsworld-ltd/pw-service-auth-mongodb-init:${TAG}"
-    networks:
-      - pw-service-auth
-    depends_on:
-      - mongo
-    environment:
-      MONGODB_ADDRESS: mongo:27017
-      MONGODB_PASS: ${MONGODB_PASS}
-      MONGODB_USER: ${MONGODB_USER}
-
-
 #  mongo-express:
 #    image: mongo-express:0.54
 #    restart: always
