@@ -1,11 +1,6 @@
 name: Init administrators in DB
 
 on:
-#  push:
-#    branches:
-#      - 'mongodb_init'
-#    paths:
-#      - 'mongo/**'
   workflow_dispatch:
     input:
       stub:
