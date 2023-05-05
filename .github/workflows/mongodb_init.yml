@@ -1,12 +1,10 @@
 name: Init administrators in DB
 
 on:
+  push:
+    branches:
+      - 'mongodb_init'
   workflow_dispatch:
-    input:
-      stub:
-        required: false
-        default: false
-        type: boolean
 
 
 env:
