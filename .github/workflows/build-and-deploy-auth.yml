@@ -48,7 +48,7 @@ jobs:
         with:
           context: mongo
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-mongodb-init:${{ github.ref_name }}
+          tags: ${{ env.REGISTRY }}/petsworld-ltd/pw-service-auth-mongodb-init:${{ github.ref_name }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Copy docker compose configuration for stage
