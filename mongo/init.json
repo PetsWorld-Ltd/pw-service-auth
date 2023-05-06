@@ -12,5 +12,12 @@
     "passwordHash": "secret",
     "createdAt": "2023-04-02T09:32:31.635Z",
     "isActive": true
+  },
+  {
+    "_id": { "$oid": "6453db64eef891b61bac3810" },
+    "login": "admin2",
+    "passwordHash": "super_secret",
+    "createdAt": "2023-04-02T09:32:31.635Z",
+    "isActive": true
   }
 ]
