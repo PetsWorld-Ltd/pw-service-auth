@@ -1,24 +1,18 @@
 name: Init administrators in DB
 
 on:
-#  push:
-#    branches:
-#      - 'mongodb_init'
-#    paths:
-#      - 'mongo/**'
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'mongo/**'
   workflow_dispatch:
-    input:
-      stub:
-        required: false
-        default: false
-        type: boolean
 
 
 env:
-  env:
-    REGISTRY: ghcr.io
-    ORGANISATION: petsworld-ltd
-    IMAGE_NAME: pw-service-auth-mongodb-init
+  REGISTRY: ghcr.io
+  ORGANISATION: petsworld-ltd
+  IMAGE_NAME: pw-service-auth-mongodb-init
 
 jobs:
   build-and-push-image:
@@ -38,10 +32,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push app's image
+      - name: Build and push initialization image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: .
+          context: mongo
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.ORGANISATION }}/${{ env.IMAGE_NAME }}:latest
 
@@ -55,10 +49,15 @@ jobs:
           host: ${{ secrets.TARGET_SERVER }}
           username: ${{ secrets.TARGET_LOGIN }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          envs: MONGODB_USER,MONGODB_PASS
+          envs: IMAGE,MONGODB_USER,MONGODB_PASS
           port: 22
           script: |
-            docker image prune
-            docker rm -f mongodb_init
+            docker rm -fv mongodb_init
             docker pull $IMAGE
-            docker run -e MONGODB_USER=$MONGODB_USER -e MONGODB_PASS=$MONGODB_PASS -e MONGODB_ADDRESS=localhost:27017  --name mongodb_init $IMAGE
+            PW_NETWORK=$(docker network ls | grep pw-service-auth | awk '{printf $1}')
+            echo "Log debug info >>>"
+            echo "Image: $IMAGE"
+            echo "Network: $PW_NETWORK"
+            echo "<<<"
+            docker run --network $PW_NETWORK -e MONGODB_USER=$MONGODB_USER -e MONGODB_PASS=$MONGODB_PASS -e MONGODB_ADDRESS=mongo:27017 --name mongodb_init $IMAGE
+            docker rm -fv mongodb_init
