@@ -3,7 +3,7 @@ name: Init administrators in DB
 on:
   push:
     branches:
-      - 'mongodb_init'
+      - 'main'
   workflow_dispatch:
 
 
