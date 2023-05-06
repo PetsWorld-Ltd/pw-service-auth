@@ -4,12 +4,11 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bson.types.ObjectId
-import org.litote.kmongo.Id
-import org.litote.kmongo.id.ObjectIdGenerator
-import org.litote.kmongo.newId
 import site.pets.world.common.models.AccessToken
 import site.pets.world.common.models.RefreshToken
-import java.time.LocalDateTime
+import site.pets.world.plus
+import java.time.Instant
+import kotlin.time.Duration.Companion.hours
 
 @Serializable
 class AdminSession(
@@ -22,10 +21,10 @@ class AdminSession(
     val refreshToken: RefreshToken = RefreshToken(),
     @SerialName("createdAt")
     @Contextual
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: Instant = Instant.now(),
     @SerialName("expiredAt")
     @Contextual
-    val expiredAt: LocalDateTime = createdAt.plusHours(1L),
+    val expiredAt: Instant = createdAt + 1.hours,
     @SerialName("isActive")
     val isActive: Boolean = true,
 )

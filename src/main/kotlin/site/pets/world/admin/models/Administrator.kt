@@ -3,15 +3,9 @@ package site.pets.world.admin.models
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.bson.BsonDateTime
-import org.bson.codecs.ObjectIdGenerator
 import org.bson.codecs.pojo.annotations.BsonId
-import org.bson.codecs.pojo.annotations.BsonProperty
 import org.bson.types.ObjectId
-import org.litote.kmongo.Id
-import org.litote.kmongo.id.ObjectIdGenerator.newObjectId
-import org.litote.kmongo.newId
-import java.time.LocalDateTime
+import java.time.Instant
 
 @Serializable
 class Administrator(
@@ -25,10 +19,10 @@ class Administrator(
     val passwordHash: String,
     @SerialName("createdAt")
     @Contextual
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: Instant = Instant.now(),
     @SerialName("updatedAt")
     @Contextual
-    val updatedAt: LocalDateTime? = null,
+    val updatedAt: Instant? = null,
     @SerialName("isActive")
     val isActive: Boolean = true,
     @SerialName("sessions")

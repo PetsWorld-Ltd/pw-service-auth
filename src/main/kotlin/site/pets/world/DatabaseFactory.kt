@@ -1,6 +1,7 @@
 package site.pets.world
 
 import com.mongodb.reactivestreams.client.MongoClient
+import io.ktor.serialization.kotlinx.*
 import kotlinx.serialization.modules.SerializersModule
 import org.litote.kmongo.Id
 import org.litote.kmongo.coroutine.CoroutineClient
@@ -21,6 +22,7 @@ class DatabaseFactory(private val serviceConfig: ServiceConfig) {
 
     fun onCreate() {
         registerModule(IdKotlinXSerializationModule)
+
         mongoClient = KMongo.createClient(serviceConfig.mongoConnectionString)
     }
 
