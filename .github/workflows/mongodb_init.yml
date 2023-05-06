@@ -1,11 +1,6 @@
 name: Init administrators in DB
 
 on:
-  push:
-    branches:
-      - 'main'
-    paths:
-      - 'mongo/**'
   workflow_dispatch:
 
 
