@@ -10,6 +10,7 @@ import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.id.jackson.IdKeySerializer
 import org.litote.kmongo.id.serialization.IdKotlinXSerializationModule
 import org.litote.kmongo.reactivestreams.KMongo
+import org.litote.kmongo.serialization.kmongoSerializationModule
 import org.litote.kmongo.serialization.registerModule
 import org.litote.kmongo.serialization.registerSerializer
 
@@ -22,7 +23,7 @@ class DatabaseFactory(private val serviceConfig: ServiceConfig) {
 
     fun onCreate() {
         registerModule(IdKotlinXSerializationModule)
-
+        registerModule(kmongoSerializationModule)
         mongoClient = KMongo.createClient(serviceConfig.mongoConnectionString)
     }
 
