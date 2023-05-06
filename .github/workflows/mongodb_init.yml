@@ -50,11 +50,12 @@ jobs:
           envs: IMAGE,MONGODB_USER,MONGODB_PASS
           port: 22
           script: |
-            docker rm -f mongodb_init
+            docker rm -fv mongodb_init
             docker pull $IMAGE
             PW_NETWORK=$(docker network ls | grep pw-service-auth | awk '{printf $1}')
             echo "Log debug info >>>"
             echo "Image: $IMAGE"
             echo "Network: $PW_NETWORK"
             echo "<<<"
-            docker run --network $PW_NETWORK -e MONGODB_USER=$MONGODB_USER -e MONGODB_PASS=$MONGODB_PASS -e MONGODB_ADDRESS=mongo:27017  --name mongodb_init $IMAGE
+            docker run --network $PW_NETWORK -e MONGODB_USER=$MONGODB_USER -e MONGODB_PASS=$MONGODB_PASS -e MONGODB_ADDRESS=mongo:27017 --name mongodb_init $IMAGE
+            docker rm -fv mongodb_init
