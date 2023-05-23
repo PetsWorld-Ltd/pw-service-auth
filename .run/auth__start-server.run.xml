@@ -1,23 +1,25 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pw-service-auth::start-watching" type="GradleRunConfiguration" factoryName="Gradle" folderName="dev">
+  <configuration default="false" name="auth::start-server" type="GradleRunConfiguration" factoryName="Gradle" folderName="dev">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="-t -x test -i" />
+      <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
         <list>
-          <option value="build" />
+          <option value=":run" />
+          <option value="--args=&quot;-config=config/dev-application.yaml&quot;" />
         </list>
       </option>
-      <option name="vmOptions" />
+      <option name="vmOptions" value="" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
+    <ForceTestExec>false</ForceTestExec>
     <method v="2" />
   </configuration>
 </component>

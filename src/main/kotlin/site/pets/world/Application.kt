@@ -17,6 +17,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     val authApp = AuthApp(this)
     authApp.onCreate()
+    configureErrorHandling()
     configureSecurity()
     configureAdministration()
     configureSerialization()

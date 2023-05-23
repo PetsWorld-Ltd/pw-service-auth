@@ -9,6 +9,7 @@ data class ErrorBody(
     val message: String? = null
 ) {
     companion object {
+        val MalformedResponse = ErrorBody("Malformed request")
         val ParsingError = ErrorBody("Couldn't parse request content")
     }
 }
