@@ -7,4 +7,8 @@ import kotlinx.serialization.Serializable
 data class ErrorBody(
     @SerialName("message")
     val message: String? = null
-)
+) {
+    companion object {
+        val ParsingError = ErrorBody("Couldn't parse request content")
+    }
+}
