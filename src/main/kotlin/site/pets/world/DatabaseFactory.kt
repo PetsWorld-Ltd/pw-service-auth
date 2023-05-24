@@ -8,7 +8,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.overwriteWith
 import org.litote.kmongo.coroutine.CoroutineClient
 import org.litote.kmongo.coroutine.CoroutineDatabase
@@ -35,7 +34,7 @@ class DatabaseFactory(private val serviceConfig: ServiceConfig) {
                 contextual(Instant::class, InstantSerializer)
             }
         ))
-        isntallKotlinxSerializer()
+        installKotlinxSerializer()
         mongoClient = KMongo.createClient(serviceConfig.mongoConnectionString)
     }
 
@@ -46,7 +45,7 @@ class DatabaseFactory(private val serviceConfig: ServiceConfig) {
     companion object
 }
 
-fun isntallKotlinxSerializer() {
+fun installKotlinxSerializer() {
     System.setProperty("org.litote.mongo.mapping.service", SerializationClassMappingTypeService::class.qualifiedName!!)
 }
 
@@ -60,8 +59,4 @@ object InstantSerializer : KSerializer<Instant> {
     override fun serialize(encoder: Encoder, value: Instant) {
         encoder.encodeString(value.toString())
     }
-
 }
-
-
-
