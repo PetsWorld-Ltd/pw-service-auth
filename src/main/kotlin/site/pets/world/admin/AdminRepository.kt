@@ -8,6 +8,9 @@ import site.pets.world.admin.models.AdminSession
 import site.pets.world.admin.models.Administrator
 import site.pets.world.common.models.AccessToken
 import site.pets.world.common.models.RefreshToken
+import site.pets.world.utils.Document
+import site.pets.world.utils.MongoOps
+import site.pets.world.utils.arrayFilters
 
 class AdminRepository(private val col: CoroutineCollection<Administrator>) {
 
@@ -41,31 +44,24 @@ class AdminRepository(private val col: CoroutineCollection<Administrator>) {
 
         val updateResult = col.updateOne(
             filter = Document(
-                mapOf(
-                    "sessions.refreshToken" to Document("\$eq", refreshToken.value),
-                    "sessions.isActive" to Document("\$eq", false),
-                )
+                "sessions.refreshToken" to Document(MongoOps.eq, refreshToken.value),
+                "sessions.isActive" to Document(MongoOps.eq, false),
             ),
-            update = Document(
-                mapOf("\$push" to Document("sessions", newSession))
-            ),
+            update = Document(MongoOps.push to Document("sessions", newSession)),
         )
         return if (updateResult.modifiedCount == 1L) newSession else null
     }
 
+
     suspend fun expireSession(refreshToken: RefreshToken) {
         col.updateOne(
             filter = "{ }",
-            update = Document("\$set", Document("sessions.$[elem].isActive", false)),
+            update = Document(MongoOps.set, Document("sessions.$[elem].isActive", false)),
             options = UpdateOptions().arrayFilters(
-                listOf(
-                    Document(
-                        mapOf(
-                            "elem.refreshToken" to Document("\$eq", refreshToken.value),
-                            "elem.isActive" to Document("\$eq", true),
-                        )
-                    ),
-                )
+                Document(
+                    "elem.refreshToken" to Document(MongoOps.eq, refreshToken.value),
+                    "elem.isActive" to Document(MongoOps.eq, true),
+                ),
             ),
         )
     }
@@ -77,3 +73,4 @@ class AdminRepository(private val col: CoroutineCollection<Administrator>) {
         )
     }
 }
+

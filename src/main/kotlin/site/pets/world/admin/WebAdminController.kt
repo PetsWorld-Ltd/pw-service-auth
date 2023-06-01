@@ -22,6 +22,7 @@ fun Route.admin(repositories: Repositories) {
             adminLogin(repositories.adminRepository)
             updateToken(repositories.adminRepository)
         }
+        accounts(repositories.adminRepository)
     }
 }
 
@@ -75,9 +76,12 @@ private fun Route.updateToken(adminRepository: AdminRepository) {
     }
 }
 
-private fun Route.accounts(repositories: Repositories) {
+private fun Route.accounts(adminRepository: AdminRepository) {
     get("accounts") {
-        TODO()
+        call.respond(
+            status = HttpStatusCode.OK,
+            AdminAccountsResponse(adminRepository.getAdministrators().map(::Admin))
+        )
     }
 }
 
