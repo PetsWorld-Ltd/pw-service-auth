@@ -105,7 +105,7 @@ paths:
   /api/v1/auth/me:
     get:
       security:
-        - bearerAuth: [] # это бы обкашлять
+        - bearerAuth: [ ] # это бы обкашлять
       tags:
         - Authorization
       responses:
@@ -137,7 +137,7 @@ paths:
     delete:
       description: Cancel authorization for specified device
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - Authorization
       parameters:
@@ -191,7 +191,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AdminAuthLoginBadRequestResponse"
+                $ref: "#/components/schemas/ErrorResponse"
   /api/v1/admin/auth/token:
     post:
       description: Web admin token refresh handle
@@ -200,7 +200,7 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: 
+            schema:
               $ref: "#/components/schemas/AdminAuthTokenRequest"
       responses:
         200:
@@ -210,16 +210,16 @@ paths:
               schema:
                 $ref: "#/components/schemas/AdminAuthTokenResponse"
         400:
-          description: Mailformed token update request or other thing
+          description: Malformed token update request or other thing
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AdminAuthTokenBadRequestResponse"
+                $ref: "#/components/schemas/ErrorResponse"
 
   /api/v1/admin/accounts:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       summary: Returns list of all accounts registered in the system
       tags:
         - Admin
@@ -246,7 +246,7 @@ paths:
           description: Accounts number to request; Default value is 20
       responses:
         200:
-          description: List of account which matches query; If query not specified - 'take'-available accounts
+          description: List of account which matches query; If query not specified - 'take'- available accounts
           content:
             application/json:
               schema:
@@ -443,7 +443,7 @@ components:
         - userId
         - deviceId
       properties:
-        userId: 
+        userId:
           type: string
         deviceId:
           type: string
@@ -481,7 +481,7 @@ components:
         - login
         - password
       properties:
-        login: 
+        login:
           type: string
           description: Admin account login name
         password:
@@ -495,15 +495,10 @@ components:
       properties:
         accessToken:
           type: string
-          description: Authorization token 
+          description: Authorization token
         refreshToken:
           type: string
           description: Refresh token
-    AdminAuthLoginBadRequestResponse:
-      type: object
-      properties:
-        error:
-          $ref: "#/components/schemas/ErrorBody"
     AdminAuthTokenRequest:
       type: object
       required:
@@ -523,8 +518,8 @@ components:
         refreshToken:
           type: string
           description: Admin refresh token
-    AdminAuthTokenBadRequestResponse:
+    ErrorResponse:
       type: object
       properties:
-        error: 
+        error:
           $ref: "#/components/schemas/ErrorBody"

@@ -2,18 +2,13 @@ package site.pets.world.admin
 
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.*
 import io.ktor.server.request.*
-import io.ktor.server.request.ContentTransformationException
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.pipeline.*
-import kotlinx.serialization.MissingFieldException
-import kotlinx.serialization.SerializationException
 import site.pets.world.Repositories
 import site.pets.world.admin.dto.*
 import site.pets.world.common.dto.ErrorBody
-import site.pets.world.common.dto.ServerErrorResponse
+import site.pets.world.common.dto.ErrorResponse
 import site.pets.world.common.models.RefreshToken
 
 fun Route.admin(repositories: Repositories) {
@@ -40,7 +35,7 @@ private fun Route.adminLogin(adminRepository: AdminRepository) {
         } else if (admin.passwordHash != request.password) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                AdminAuthLoginBadRequestResponse(
+                ErrorResponse(
                     ErrorBody("Passed password is invalid")
                 )
             )
@@ -63,7 +58,7 @@ private fun Route.updateToken(adminRepository: AdminRepository) {
         if (session == null) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
-                AdminAuthTokenBadRequestResponse(
+                ErrorResponse(
                     ErrorBody("Session with refreshToken '${request.refreshToken}' not found")
                 )
             )
